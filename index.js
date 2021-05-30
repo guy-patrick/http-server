@@ -21,7 +21,7 @@ const friends = [
 
 server.on("request", (req, res) => {
   // url extraction
-  const { url } = req;
+  const { url, method } = req;
 
   const items = url.split("/");
   // ex: output ["", "friends", "2"]
@@ -29,31 +29,36 @@ server.on("request", (req, res) => {
 
   const [, query, param] = items;
 
-  switch (query) {
-    case "friends":
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "application/json");
-      if (items.length === 3) {
-        res.end(JSON.stringify(friends[+param]));
-      } else {
-        res.end(JSON.stringify(friends));
-      }
-      break;
-    case "messages":
-      res.setHeader("Content-Type", "text/html");
-      res.write("<html>");
-      res.write("<body>");
-      res.write("<ul>");
-      res.write("<li>Hello Isaac!</li>");
-      res.write("<li>What are your throughts as astronomy?</li>");
-      res.write("</ul>");
-      res.write("</body>");
-      res.write("</html>");
-      res.end();
-    default:
-      res.statusCode = 404;
-      res.end();
-      break;
+  if (method === "POST" && query === "friends") {
+    req.on("data", (data) => {
+      const friend = data.toString();
+      console.log("Request:", friend);
+      friends.push(JSON.parse(friend));
+    });
+    req.pipe(res);
+  } else if (method === "GET" && query === "friends") {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json");
+    if (items.length === 3) {
+      res.end(JSON.stringify(friends[+param]));
+    } else {
+      res.end(JSON.stringify(friends));
+    }
+  } else if (method === "GET" && query === "messages") {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/html");
+    res.write("<html>");
+    res.write("<body>");
+    res.write("<ul>");
+    res.write("<li>Hello Isaac!</li>");
+    res.write("<li>What are your throughts as astronomy?</li>");
+    res.write("</ul>");
+    res.write("</body>");
+    res.write("</html>");
+    res.end();
+  } else {
+    res.statusCode = 404;
+    res.end();
   }
 });
 
