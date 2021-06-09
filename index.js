@@ -2,22 +2,32 @@ const http = require("http");
 
 const port = 3000;
 
+const server = http.createServer();
+
+const friends = [
+  {
+    id: 0,
+    name: "Nikola Tesla",
+  },
+  {
+    id: 1,
+    name: "Sir Isacc Newton",
+  },
+];
+
 const requestListener = (req, res) => {
   const { url, params } = req;
+  const [, endpoint, param] = url.split("/");
 
-  if (url === "/friends") {
-    /* res.writeHead(200, {
-      "Content-Type": "application/json",
-    }); */
+  if (endpoint === "friends") {
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
-    res.end(
-      JSON.stringify({
-        id: 1,
-        name: "Sir Isaac Newton",
-      })
-    );
-  } else if (url === "/messages") {
+    if (param) {
+      res.end(JSON.stringify(friends[+param]));
+    } else {
+      res.end(JSON.stringify(friends));
+    }
+  } else if (endpoint === "messages") {
     res.setHeader("Content-Type", "text/html");
     res.write("<html>");
     res.write("<body>");
@@ -34,7 +44,6 @@ const requestListener = (req, res) => {
   }
 };
 
-const server = http.createServer();
 server.on("request", requestListener);
 
 server.listen(port, () => {
