@@ -1,0 +1,23 @@
+{
+  "name": "http-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guy-patrick/http-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/guy-patrick/http-server/issues"
+  },
+  "homepage": "https://github.com/guy-patrick/http-server#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
