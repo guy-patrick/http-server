@@ -36,9 +36,10 @@ const requestListener = (req, res) => {
   if (method === "POST" && endpoint === "friends") {
     req.on("data", (data /* buffer object */) => {
       const friend = data.toString();
-      console.log(`Request: ${friend}`);
+      console.log(`Request: ${friend}, ${typeof friend}`);
       friends.push(JSON.parse(friend));
     });
+    req.pipe(res);
   }
 
   if (method === "GET" && endpoint === "messages") {
