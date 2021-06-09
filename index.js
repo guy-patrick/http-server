@@ -13,13 +13,17 @@ const friends = [
     id: 1,
     name: "Sir Isacc Newton",
   },
+  {
+    id: 2,
+    name: "Albert Einstein",
+  },
 ];
 
 const requestListener = (req, res) => {
-  const { url, params } = req;
+  const { url, method } = req;
   const [, endpoint, param] = url.split("/");
 
-  if (endpoint === "friends") {
+  if (method === "GET" && endpoint === "friends") {
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");
     if (param) {
@@ -27,7 +31,17 @@ const requestListener = (req, res) => {
     } else {
       res.end(JSON.stringify(friends));
     }
-  } else if (endpoint === "messages") {
+  }
+
+  if (method === "POST" && endpoint === "friends") {
+    req.on("data", (data /* buffer object */) => {
+      const friend = data.toString();
+      console.log(`Request: ${friend}`);
+      friends.push(JSON.parse(friend));
+    });
+  }
+
+  if (method === "GET" && endpoint === "messages") {
     res.setHeader("Content-Type", "text/html");
     res.write("<html>");
     res.write("<body>");
@@ -37,9 +51,6 @@ const requestListener = (req, res) => {
     res.write("</ul>");
     res.write("</body>");
     res.write("</html>");
-    res.end();
-  } else {
-    res.statusCode = 404;
     res.end();
   }
 };
